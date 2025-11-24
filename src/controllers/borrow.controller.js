@@ -169,3 +169,26 @@ export const getBorrowStats = async (req, res) => {
     });
   }
 };
+
+export const getBorrowHistory = async (req, res) => {
+  console.log("getBorrowHistory triggering");
+  try {
+    const userId = req.user.id;
+
+    const history = await Borrow.find({ userId })
+      .populate("bookId", "title author isbn genre copies")
+      .sort({ borrowedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Borrow history fetched successfully",
+      history,
+    });
+  } catch (error) {
+    console.error("Borrow History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
