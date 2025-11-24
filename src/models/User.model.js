@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin", "member"],
       default: "member",
     },
+    borrowedBooks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Borrow",
+      },
+    ],
   },
   { timestamps: true }
 );
