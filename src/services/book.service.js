@@ -41,3 +41,14 @@ export const deleteBookService = async ({ id }) => {
     message: "Book deleted successfully",
   };
 };
+
+export const updateBookService = async (id, updateData) => {
+  const updated = await Book.findByIdAndUpdate(id, updateData, { new: true });
+
+  if (!updated) throw new Error("Book not found");
+
+  return {
+    success: true,
+    message: "Book updated successfully",
+  };
+};

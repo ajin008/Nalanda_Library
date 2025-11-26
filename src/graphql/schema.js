@@ -20,12 +20,28 @@ export const schema = buildSchema(`
 
     type DeleteBookResponse {
     success:Boolean!,
-    message:String!
+    message:String! 
+    }
+
+    type UpdateBookResponse {
+    success: Boolean!
+    message: String!
     }
 
     type Mutation {
     registerUser(name:String!,email:String!,password:String!,role:String!):User
     createBook(title:String!,author:String!,isbn:String!,publicationDate:String!,genre:String!,copies:Int!,description:String,publisher:String): CreateBookResponse
     deleteBook(bookId: ID!): DeleteBookResponse
+    updateBook(
+    id: ID!
+    title: String
+    author: String
+    isbn: String
+    publicationDate: String
+    genre: String
+    copies: Int
+    description: String
+    publisher: String
+    ): UpdateBookResponse
     }
     `);

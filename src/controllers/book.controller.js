@@ -1,5 +1,9 @@
 import { Book } from "../models/Book.model.js";
-import { createBookService } from "../services/book.service.js";
+import {
+  createBookService,
+  deleteBookService,
+  updateBookService,
+} from "../services/book.service.js";
 
 export const createBook = async (req, res) => {
   console.log("createBook triggering");
@@ -67,16 +71,7 @@ export const getBookById = async (req, res) => {
 export const deleteById = async (req, res) => {
   console.log("deleteById is triggering");
   try {
-    const { id } = req.params;
-
-    const deletedBook = await Book.findByIdAndDelete(id);
-
-    if (!deletedBook) {
-      return res.status(404).json({
-        success: false,
-        message: "Book not found",
-      });
-    }
+    await deleteBookService({ id: req.params.id });
 
     res.status(200).json({
       success: true,
@@ -92,19 +87,8 @@ export const updateBook = async (req, res) => {
   console.log("updateBook is triggering");
   try {
     const { id } = req.params;
-    const updatedData = req.body;
 
-    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedBook) {
-      return res.status(404).json({
-        success: false,
-        message: "Book not found",
-      });
-    }
+    await updateBookService({ id, updatedData: req.body });
 
     return res.status(200).json({
       success: true,

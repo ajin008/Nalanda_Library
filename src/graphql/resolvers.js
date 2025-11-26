@@ -2,6 +2,7 @@ import { authUser } from "../middleware/authUser.js";
 import {
   createBookService,
   deleteBookService,
+  updateBookService,
 } from "../services/book.service.js";
 import { registerUserService } from "../services/user.service.js";
 
@@ -20,5 +21,10 @@ export const root = {
     console.log("delete book resolver is triggering");
     await authUser(context);
     return await deleteBookService({ id: bookId });
+  },
+
+  updateBook: async ({ id, ...updateData }, context) => {
+    await authUser(context);
+    return await updateBookService(id, updateData);
   },
 };
