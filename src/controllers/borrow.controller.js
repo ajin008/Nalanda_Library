@@ -192,3 +192,56 @@ export const getBorrowHistory = async (req, res) => {
     });
   }
 };
+
+export const mostBorrowedBooks = async (req, res) => {
+  try {
+    console.log("Most Borrowed Report Triggered");
+
+    const report = await Borrow.aggregate([
+      // Group by bookId and count documents
+      {
+        $group: {
+          _id: "$bookId",
+          borrowCount: { $sum: 1 },
+        },
+      },
+      // Sort by count (descending)
+      { $sort: { borrowCount: -1 } },
+      // Join with Books collection
+      {
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      // Convert `book` array to object
+      { $unwind: "$book" },
+      // Select only required fields
+      {
+        $project: {
+          _id: 1,
+          borrowCount: 1,
+          title: "$book.title",
+          author: "$book.author",
+          genre: "$book.genre",
+          isbn: "$book.isbn",
+          copies: "$book.copies",
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Most borrowed books fetched",
+      report,
+    });
+  } catch (error) {
+    console.error("Report Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};

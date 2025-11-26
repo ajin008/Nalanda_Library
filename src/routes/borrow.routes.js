@@ -5,6 +5,7 @@ import {
   currentBorrowed,
   getBorrowHistory,
   getBorrowStats,
+  mostBorrowedBooks,
   returnBook,
 } from "../controllers/borrow.controller.js";
 
@@ -15,5 +16,6 @@ borrowRouter.get("/currentBorrowed", verifyToken, currentBorrowed);
 borrowRouter.post("/return", verifyToken, returnBook);
 borrowRouter.get("/stats", verifyToken, getBorrowStats);
 borrowRouter.get("/history", verifyToken, getBorrowHistory);
+borrowRouter.get("/most-borrowed", verifyToken, mostBorrowedBooks);
 
 export default borrowRouter;

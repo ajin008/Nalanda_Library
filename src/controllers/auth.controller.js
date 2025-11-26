@@ -2,31 +2,17 @@ import { User } from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import { setTokenCookie } from "../utils/setTokenCookie.js";
+import { registerUserService } from "../services/user.service.js";
 
 export const registerUser = async (req, res) => {
+  console.log("register user is triggering");
   try {
-    const { name, email, password, role } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "Email already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-    });
+    const newUser = await registerUserService(req.body);
 
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+      body: newUser,
     });
   } catch (error) {
     return res.status(500).json({

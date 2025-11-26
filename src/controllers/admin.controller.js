@@ -39,7 +39,9 @@ export const getAllUsers = async (req, res) => {
   try {
     console.log("getAllUsers triggered");
 
-    const users = await User.find({}, "-password").sort({ createdAt: -1 });
+    const users = await User.find({ role: "user" }, "-password").sort({
+      createdAt: -1,
+    });
 
     return res.status(200).json({
       success: true,

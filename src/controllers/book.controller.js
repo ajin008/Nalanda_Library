@@ -1,40 +1,10 @@
 import { Book } from "../models/Book.model.js";
+import { createBookService } from "../services/book.service.js";
 
 export const createBook = async (req, res) => {
   console.log("createBook triggering");
   try {
-    const {
-      title,
-      author,
-      isbn,
-      publicationDate,
-      genre,
-      copies,
-      description,
-      publisher,
-    } = req.body;
-
-    console.log(req.body);
-
-    const existing = await Book.findOne({ isbn });
-
-    if (existing) {
-      return res
-        .status(400)
-        .json({ success: false, message: "ISBN already exists" });
-    }
-
-    await Book.create({
-      title,
-      author,
-      isbn,
-      publicationDate,
-      genre,
-      copies,
-      description,
-      publisher,
-      createdBy: req.user.id,
-    });
+    await createBookService(req.body);
 
     res.status(201).json({
       success: true,
