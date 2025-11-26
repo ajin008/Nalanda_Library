@@ -9,6 +9,7 @@ import adminRouter from "./routes/admin.route.js";
 import { graphqlHTTP } from "express-graphql";
 import { schema } from "./graphql/schema.js";
 import { root } from "./graphql/resolvers.js";
+import { graphqlServer } from "./graphql/index.js";
 
 const app = express();
 
@@ -27,14 +28,6 @@ app.use("/api/books", bookRouter);
 app.use("/api/borrow", borrowRouter);
 app.use("/api/admin", adminRouter);
 
-app.use(
-  "/graphql",
-  graphqlHTTP((req, res) => ({
-    schema,
-    rootValue: root,
-    graphiql: true,
-    context: { req, res },
-  }))
-);
+app.use("/graphql", graphqlServer());
 
 export default app;

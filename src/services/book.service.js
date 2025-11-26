@@ -31,3 +31,13 @@ export const createBookService = async ({
     message: "Book created successfully",
   };
 };
+
+export const deleteBookService = async ({ id }) => {
+  const deletedBook = await Book.findByIdAndDelete(id);
+  if (!deletedBook) throw new Error("Book not found");
+
+  return {
+    success: true,
+    message: "Book deleted successfully",
+  };
+};

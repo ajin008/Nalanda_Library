@@ -12,7 +12,13 @@ export const schema = buildSchema(`
     _dummy:String
     }
 
+
     type CreateBookResponse {
+    success:Boolean!,
+    message:String!
+    }
+
+    type DeleteBookResponse {
     success:Boolean!,
     message:String!
     }
@@ -20,5 +26,6 @@ export const schema = buildSchema(`
     type Mutation {
     registerUser(name:String!,email:String!,password:String!,role:String!):User
     createBook(title:String!,author:String!,isbn:String!,publicationDate:String!,genre:String!,copies:Int!,description:String,publisher:String): CreateBookResponse
+    deleteBook(bookId: ID!): DeleteBookResponse
     }
     `);
