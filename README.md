@@ -43,20 +43,58 @@ It provides APIs for user management, book inventory, borrowing system, and admi
 
 ```bash
 src/
-
-├── config/               # Environment, Database, and third-party service settings
-│   ├── db.js             # Database connection and initialization
-│   └── env.js            # Environment variable loading and validation
+├── config/
+│ ├── db.js
+│ └── env.js
 │
-├── controllers/          # Express request handlers for REST endpoints
-│   ├── admin.controller.js
-│   ... (etc.)
+├── controllers/
+│ ├── admin.controller.js
+│ ├── auth.controller.js
+│ ├── book.controller.js
+│ ├── borrow.controller.js
+│ └── user.controller.js
 │
-├── graphql/              # GraphQL implementation components
-│   ├── schema.js         # The main GraphQL Schema Definition Language (SDL)
-│   ... (etc.)
+├── graphql/
+│ ├── schema.js
+│ ├── resolvers.js
+│ └── index.js
 │
-└── server.js             # Entry point, responsible for starting the HTTP listener
+├── middleware/
+│ ├── auth.js
+│ ├── authUser.js
+│ ├── rateLimit.js
+│ └── role.js
+│
+├── models/
+│ ├── Book.model.js
+│ ├── Borrow.model.js
+│ └── User.model.js
+│
+├── repositories/
+│ ├── book.repo.js
+│ ├── borrow.repo.js
+│ └── user.repo.js
+│
+├── routes/
+│ ├── admin.routes.js
+│ ├── auth.routes.js
+│ ├── book.routes.js
+│ ├── borrow.routes.js
+│ └── user.routes.js
+│
+├── services/
+│ ├── book.service.js
+│ ├── borrow.service.js
+│ └── user.service.js
+│
+├── utils/
+│ ├── error.js
+│ ├── generateToken.js
+│ ├── response.js
+│ └── setTokenCookie.js
+│
+├── app.js
+└── server.js
 
 ---
 
