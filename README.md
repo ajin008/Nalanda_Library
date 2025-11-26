@@ -39,66 +39,24 @@ It provides APIs for user management, book inventory, borrowing system, and admi
 ---
 
 ## 📁 Project Structure
-<details>
-<summary>Detailed Directory Tree</summary>
+## 📁 Project Structure
 
+```bash
 src/
 
-├── config/             # Environment, Database, and third-party service settings
-│   ├── db.js           # Database connection and initialization
-│   └── env.js          # Environment variable loading and validation
+├── config/               # Environment, Database, and third-party service settings
+│   ├── db.js             # Database connection and initialization
+│   └── env.js            # Environment variable loading and validation
 │
-├── controllers/        # Express request handlers for REST endpoints
+├── controllers/          # Express request handlers for REST endpoints
 │   ├── admin.controller.js
-│   ├── auth.controller.js
-│   ├── book.controller.js
-│   ├── borrow.controller.js
-│   └── user.controller.js
+│   ... (etc.)
 │
-├── graphql/            # GraphQL implementation components
-│   ├── schema.js       # The main GraphQL Schema Definition Language (SDL)
-│   ├── resolvers.js    # Functions that fetch the data for GraphQL queries/mutations
-│   └── index.js        # GraphQL server setup (e.g., integrating with express-graphql)
+├── graphql/              # GraphQL implementation components
+│   ├── schema.js         # The main GraphQL Schema Definition Language (SDL)
+│   ... (etc.)
 │
-├── middleware/         # Functions executed between request and controller
-│   ├── auth.js         # General authentication check (e.g., JWT verification)
-│   ├── authUser.js     # User-specific authentication checks
-│   ├── rateLimit.js    # Request rate limiting implementation
-│   └── role.js         # Authorization check based on user roles (e.g., 'admin' only)
-│
-├── models/             # Mongoose/Sequelize models for data structure
-│   ├── Book.model.js
-│   ├── Borrow.model.js
-│   └── User.model.js
-│
-├── repositories/       # Data Access Object (DAO) layer for direct DB communication
-│   ├── book.repo.js    # Low-level CRUD for Book entity
-│   ├── borrow.repo.js  # Low-level CRUD for Borrowing transactions
-│   └── user.repo.js    # Low-level CRUD for User entity
-│
-├── routes/             # Express router definitions
-│   ├── admin.routes.js # Routes requiring admin access
-│   ├── auth.routes.js  # Registration, login, logout routes
-│   ├── book.routes.js  # Routes for accessing book resources
-│   ├── borrow.routes.js
-│   └── user.routes.js  # Routes for accessing user profiles
-│
-├── services/           # Contains core business logic and complex workflows
-│   ├── book.service.js
-│   ├── borrow.service.js
-│   └── user.service.js
-│
-├── utils/              # General helper functions used across layers
-│   ├── error.js        # Custom error classes and standardized error handling
-│   ├── generateToken.js# Utility function to create JWTs
-│   ├── response.js     # Standardized API response formatter
-│   └── setTokenCookie.js # Helper for setting token in HTTP-only cookie
-│
-├── app.js              # Main Express application initialization (middleware, routing setup)
-└── server.js           # Entry point, responsible for starting the HTTP listener
-
-
-</details>
+└── server.js             # Entry point, responsible for starting the HTTP listener
 
 ---
 
@@ -208,6 +166,7 @@ Available copies
 Registered members
 
 Most borrowed books aggregation
+
 
 
 
