@@ -5,7 +5,7 @@ import {
   updateBookService,
 } from "../services/book.service.js";
 
-export const createBook = async (req, res) => {
+export const createBook = async (req, res, next) => {
   console.log("createBook triggering");
   try {
     await createBookService(req.body);
@@ -15,17 +15,11 @@ export const createBook = async (req, res) => {
       message: "Book created successfully",
     });
   } catch (error) {
-    console.error("Auth Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const getAllBook = async (req, res) => {
-  console.log("get all book with pagination");
-
+export const getAllBook = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -43,19 +37,19 @@ export const getAllBook = async (req, res) => {
       books,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
-export const getBookById = async (req, res) => {
-  console.log("getBookById is triggering");
+export const getBookById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const book = await Book.findById(id);
 
     if (!book) {
-      return res.status(400).json({ success: false, message: "No Book found" });
+      const notFoundError = new Error("No Book found");
+      notFoundError.status = 404;
+      return next(notFoundError);
     }
 
     res.status(200).json({
@@ -64,12 +58,11 @@ export const getBookById = async (req, res) => {
       body: book,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
-export const deleteById = async (req, res) => {
-  console.log("deleteById is triggering");
+export const deleteById = async (req, res, next) => {
   try {
     await deleteBookService({ id: req.params.id });
 
@@ -78,17 +71,15 @@ export const deleteById = async (req, res) => {
       message: "Book deleted successfully",
     });
   } catch (error) {
-    console.error("Delete error: ", error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };
 
-export const updateBook = async (req, res) => {
-  console.log("updateBook is triggering");
+export const updateBook = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await updateBookService({ id, updatedData: req.body });
+    const updatedBook = await updateBookService({ id, updatedData: req.body });
 
     return res.status(200).json({
       success: true,
@@ -96,19 +87,13 @@ export const updateBook = async (req, res) => {
       body: updatedBook,
     });
   } catch (error) {
-    console.error("Update Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const searchBooks = async (req, res) => {
-  console.log("searchBooks triggering");
+export const searchBooks = async (req, res, next) => {
   try {
     const { q, genre } = req.query;
-    console.log(q, genre);
 
     const query = {
       $or: [
@@ -124,14 +109,12 @@ export const searchBooks = async (req, res) => {
 
     const books = await Book.find(query);
 
-    console.log("fetched books:", books);
-
     res.status(200).json({
       success: true,
       message: "Search results",
       books,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    next(error);
   }
 };

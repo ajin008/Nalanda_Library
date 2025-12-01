@@ -4,7 +4,7 @@ import {
   deleteBookService,
   updateBookService,
 } from "../services/book.service.js";
-import { registerUserService } from "../services/user.service.js";
+import { getUser, registerUserService } from "../services/user.service.js";
 
 export const root = {
   registerUser: async ({ name, email, password, role }) => {
@@ -26,5 +26,9 @@ export const root = {
   updateBook: async ({ id, ...updateData }, context) => {
     await authUser(context);
     return await updateBookService(id, updateData);
+  },
+
+  getUserById: async ({ id }) => {
+    return await getUser({ id });
   },
 };

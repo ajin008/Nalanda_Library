@@ -1,23 +1,22 @@
 import { Borrow } from "../models/Borrow.model.js";
 import { Book } from "../models/Book.model.js";
 
-export const borrowBook = async (req, res) => {
+export const borrowBook = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { bookId } = req.body;
 
     if (!bookId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Book ID is required" });
+      const error = new Error("Book ID is required");
+      error.status = 400;
+      return next(error);
     }
 
     const book = await Book.findById(bookId);
     if (!book) {
-      return res.status(404).json({
-        success: false,
-        message: "Book not found",
-      });
+      const error = new Error("Book not found");
+      error.status = 404;
+      return next(error);
     }
 
     const existingBorrow = await Borrow.findOne({
@@ -27,18 +26,17 @@ export const borrowBook = async (req, res) => {
     });
 
     if (existingBorrow) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "You already borrowed this book. Return it before borrowing again.",
-      });
+      const error = new Error(
+        "You already borrowed this book. Return it before borrowing again."
+      );
+      error.status = 400;
+      return next(error);
     }
 
     if (book.copies <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Book not available",
-      });
+      const error = new Error("Book not available");
+      error.status = 400;
+      return next(error);
     }
 
     const borrowRecord = await Borrow.create({
@@ -55,16 +53,11 @@ export const borrowBook = async (req, res) => {
       borrow: borrowRecord,
     });
   } catch (error) {
-    console.error("Borrow Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const currentBorrowed = async (req, res) => {
-  console.log("currentBorrowed is triggering");
+export const currentBorrowed = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
@@ -79,27 +72,21 @@ export const currentBorrowed = async (req, res) => {
       books: borrowedBooks,
     });
   } catch (error) {
-    console.error("Fetch Borrowed Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const returnBook = async (req, res) => {
+export const returnBook = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { bookId } = req.body;
 
     if (!bookId) {
-      return res.status(400).json({
-        success: false,
-        message: "Book ID is required",
-      });
+      const error = new Error("Book ID is required");
+      error.status = 400;
+      return next(error);
     }
 
-    // Find active borrow record
     const borrowRecord = await Borrow.findOne({
       userId,
       bookId,
@@ -107,18 +94,15 @@ export const returnBook = async (req, res) => {
     });
 
     if (!borrowRecord) {
-      return res.status(404).json({
-        success: false,
-        message: "No borrowed record found",
-      });
+      const error = new Error("No borrowed record found");
+      error.status = 404;
+      return next(error);
     }
 
-    // Update borrow record
     borrowRecord.status = "returned";
     borrowRecord.returnDate = new Date();
     await borrowRecord.save();
 
-    // Increase available copies
     const book = await Book.findById(bookId);
     book.copies += 1;
     await book.save();
@@ -128,31 +112,24 @@ export const returnBook = async (req, res) => {
       message: "Book returned successfully",
     });
   } catch (error) {
-    console.error("Return Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const getBorrowStats = async (req, res) => {
+export const getBorrowStats = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
-    // Total currently borrowed (not returned yet)
     const borrowedCount = await Borrow.countDocuments({
       userId,
       status: "borrowed",
     });
 
-    // Total returned
     const returnedCount = await Borrow.countDocuments({
       userId,
       status: "returned",
     });
 
-    // Total read = all borrow history
     const totalReadCount = borrowedCount + returnedCount;
 
     return res.status(200).json({
@@ -162,16 +139,11 @@ export const getBorrowStats = async (req, res) => {
       totalReadCount,
     });
   } catch (error) {
-    console.error("Borrow Stats Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const getBorrowHistory = async (req, res) => {
-  console.log("getBorrowHistory triggering");
+export const getBorrowHistory = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
@@ -185,29 +157,20 @@ export const getBorrowHistory = async (req, res) => {
       history,
     });
   } catch (error) {
-    console.error("Borrow History Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const mostBorrowedBooks = async (req, res) => {
+export const mostBorrowedBooks = async (req, res, next) => {
   try {
-    console.log("Most Borrowed Report Triggered");
-
     const report = await Borrow.aggregate([
-      // Group by bookId and count documents
       {
         $group: {
           _id: "$bookId",
           borrowCount: { $sum: 1 },
         },
       },
-      // Sort by count (descending)
       { $sort: { borrowCount: -1 } },
-      // Join with Books collection
       {
         $lookup: {
           from: "books",
@@ -216,9 +179,7 @@ export const mostBorrowedBooks = async (req, res) => {
           as: "book",
         },
       },
-      // Convert `book` array to object
       { $unwind: "$book" },
-      // Select only required fields
       {
         $project: {
           _id: 1,
@@ -238,10 +199,6 @@ export const mostBorrowedBooks = async (req, res) => {
       report,
     });
   } catch (error) {
-    console.error("Report Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };

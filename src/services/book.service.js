@@ -1,4 +1,5 @@
 import { Book } from "../models/Book.model.js";
+import { DuplicateError, NotFoundError } from "../utils/error.js";
 
 export const createBookService = async ({
   title,
@@ -13,7 +14,7 @@ export const createBookService = async ({
   console.log("createBookService is triggering");
   const existing = await Book.findOne({ isbn });
 
-  if (existing) throw new Error("ISBN already exists");
+  if (existing) throw new DuplicateError("ISBN already exists");
 
   await Book.create({
     title,
@@ -45,7 +46,7 @@ export const deleteBookService = async ({ id }) => {
 export const updateBookService = async (id, updateData) => {
   const updated = await Book.findByIdAndUpdate(id, updateData, { new: true });
 
-  if (!updated) throw new Error("Book not found");
+  if (!updated) throw new NotFoundError("Book not found");
 
   return {
     success: true,

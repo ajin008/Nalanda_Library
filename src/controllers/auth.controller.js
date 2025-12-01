@@ -4,7 +4,7 @@ import { generateToken } from "../utils/generateToken.js";
 import { setTokenCookie } from "../utils/setTokenCookie.js";
 import { registerUserService } from "../services/user.service.js";
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   console.log("register user is triggering");
   try {
     const newUser = await registerUserService(req.body);
@@ -15,14 +15,11 @@ export const registerUser = async (req, res) => {
       body: newUser,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -56,10 +53,7 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
@@ -76,7 +70,7 @@ export const logoutUser = async (req, res) => {
   });
 };
 
-export const signupAdmin = async (req, res) => {
+export const signupAdmin = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -102,15 +96,12 @@ export const signupAdmin = async (req, res) => {
       message: "Admin account created",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
 // ADMIN LOGIN
-export const loginAdmin = async (req, res) => {
+export const loginAdmin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -144,10 +135,7 @@ export const loginAdmin = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 

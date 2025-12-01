@@ -2,7 +2,7 @@ import { Book } from "../models/Book.model.js";
 import { Borrow } from "../models/Borrow.model.js";
 import { User } from "../models/User.model.js";
 
-export const getAdminStats = async (req, res) => {
+export const getAdminStats = async (req, res, next) => {
   try {
     const totalBooks = await Book.countDocuments();
 
@@ -27,15 +27,11 @@ export const getAdminStats = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Stats Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     console.log("getAllUsers triggered");
 
@@ -49,10 +45,6 @@ export const getAllUsers = async (req, res) => {
       users,
     });
   } catch (error) {
-    console.error("Get Users Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    next(error);
   }
 };

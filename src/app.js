@@ -10,6 +10,7 @@ import { graphqlHTTP } from "express-graphql";
 import { schema } from "./graphql/schema.js";
 import { root } from "./graphql/resolvers.js";
 import { graphqlServer } from "./graphql/index.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -29,5 +30,7 @@ app.use("/api/borrow", borrowRouter);
 app.use("/api/admin", adminRouter);
 
 app.use("/graphql", graphqlServer());
+
+app.use(errorHandler);
 
 export default app;

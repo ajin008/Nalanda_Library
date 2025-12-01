@@ -12,8 +12,12 @@ export const schema = buildSchema(`
     _dummy:String
     }
 
+    type getUserById {
+      user(id: ID!): User
+    }   
 
-    type CreateBookResponse {
+
+    type CreateBookResponse {   
     success:Boolean!,
     message:String!
     }
@@ -44,4 +48,6 @@ export const schema = buildSchema(`
     publisher: String
     ): UpdateBookResponse
     }
+
+
     `);
